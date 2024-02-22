@@ -1,0 +1,18 @@
+# Ignorar todas las carpetas "build"
+build/
+
+# Excepto la carpeta "build" en la raíz del repositorio
+!Reto1/build/
+
+# Ignorar todas las carpetas "build"
+install/
+
+# Excepto la carpeta "build" en la raíz del repositorio
+!Reto1/install/
+
+# Ignorar todas las carpetas "build"
+log/
+
+# Excepto la carpeta "build" en la raíz del repositorio
+!Reto1/log/
+
