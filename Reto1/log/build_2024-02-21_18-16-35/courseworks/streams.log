@@ -1,0 +1,43 @@
+[0.373s] Invoking command in '/home/abraham/FundamemtacionRos2/Reto1/courseworks': PYTHONPATH=/home/abraham/FundamemtacionRos2/Reto1/build/courseworks/prefix_override:/home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/courseworks build --build-base /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build install --record /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/install.log --single-version-externally-managed
+[0.500s] running egg_info
+[0.500s] creating ../build/courseworks/courseworks.egg-info
+[0.500s] writing ../build/courseworks/courseworks.egg-info/PKG-INFO
+[0.500s] writing dependency_links to ../build/courseworks/courseworks.egg-info/dependency_links.txt
+[0.500s] writing entry points to ../build/courseworks/courseworks.egg-info/entry_points.txt
+[0.500s] writing requirements to ../build/courseworks/courseworks.egg-info/requires.txt
+[0.500s] writing top-level names to ../build/courseworks/courseworks.egg-info/top_level.txt
+[0.500s] writing manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+[0.502s] reading manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+[0.502s] writing manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+[0.502s] running build
+[0.502s] running build_py
+[0.502s] creating /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build
+[0.503s] creating /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib
+[0.503s] creating /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+[0.503s] copying courseworks/__init__.py -> /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+[0.503s] copying courseworks/signal_generator.py -> /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+[0.503s] copying courseworks/signal_process.py -> /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+[0.503s] running install
+[0.503s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.503s]   warnings.warn(
+[0.503s] running install_lib
+[0.503s] creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+[0.503s] copying /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks/__init__.py -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+[0.503s] copying /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks/signal_generator.py -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+[0.503s] copying /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks/signal_process.py -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+[0.504s] byte-compiling /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks/__init__.py to __init__.cpython-310.pyc
+[0.504s] byte-compiling /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks/signal_generator.py to signal_generator.cpython-310.pyc
+[0.504s] byte-compiling /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks/signal_process.py to signal_process.cpython-310.pyc
+[0.504s] running install_data
+[0.504s] creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index
+[0.505s] creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index/resource_index
+[0.505s] creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index/resource_index/packages
+[0.505s] copying resource/courseworks -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index/resource_index/packages
+[0.505s] copying package.xml -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/courseworks
+[0.505s] running install_egg_info
+[0.506s] Copying ../build/courseworks/courseworks.egg-info to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks-0.0.0-py3.10.egg-info
+[0.506s] running install_scripts
+[0.519s] Installing signal_generator script to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/courseworks
+[0.519s] Installing signal_process script to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/courseworks
+[0.519s] writing list of installed files to '/home/abraham/FundamemtacionRos2/Reto1/build/courseworks/install.log'
+[0.536s] Invoked command in '/home/abraham/FundamemtacionRos2/Reto1/courseworks' returned '0': PYTHONPATH=/home/abraham/FundamemtacionRos2/Reto1/build/courseworks/prefix_override:/home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/courseworks build --build-base /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build install --record /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/install.log --single-version-externally-managed

@@ -1,0 +1,4 @@
+[console_scripts]
+signal_generator = courseworks.signal_generator:main
+signal_process = courseworks.signal_process:main
+

@@ -1,0 +1,24 @@
+[0.385s] Invoking command in '/home/abraham/FundamemtacionRos2/Reto1/courseworks': PYTHONPATH=/home/abraham/FundamemtacionRos2/Reto1/build/courseworks/prefix_override:/home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/courseworks build --build-base /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build install --record /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/install.log --single-version-externally-managed
+[0.526s] running egg_info
+[0.526s] writing ../build/courseworks/courseworks.egg-info/PKG-INFO
+[0.526s] writing dependency_links to ../build/courseworks/courseworks.egg-info/dependency_links.txt
+[0.526s] writing entry points to ../build/courseworks/courseworks.egg-info/entry_points.txt
+[0.526s] writing requirements to ../build/courseworks/courseworks.egg-info/requires.txt
+[0.527s] writing top-level names to ../build/courseworks/courseworks.egg-info/top_level.txt
+[0.528s] reading manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+[0.529s] writing manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+[0.529s] running build
+[0.529s] running build_py
+[0.530s] running install
+[0.530s] /usr/lib/python3/dist-packages/setuptools/command/install.py:34: SetuptoolsDeprecationWarning: setup.py install is deprecated. Use build and pip and other standards-based tools.
+[0.530s]   warnings.warn(
+[0.530s] running install_lib
+[0.531s] running install_data
+[0.532s] running install_egg_info
+[0.533s] removing '/home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks-0.0.0-py3.10.egg-info' (and everything under it)
+[0.533s] Copying ../build/courseworks/courseworks.egg-info to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks-0.0.0-py3.10.egg-info
+[0.534s] running install_scripts
+[0.547s] Installing signal_generator script to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/courseworks
+[0.547s] Installing signal_process script to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/courseworks
+[0.547s] writing list of installed files to '/home/abraham/FundamemtacionRos2/Reto1/build/courseworks/install.log'
+[0.563s] Invoked command in '/home/abraham/FundamemtacionRos2/Reto1/courseworks' returned '0': PYTHONPATH=/home/abraham/FundamemtacionRos2/Reto1/build/courseworks/prefix_override:/home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 setup.py egg_info --egg-base ../build/courseworks build --build-base /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build install --record /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/install.log --single-version-externally-managed

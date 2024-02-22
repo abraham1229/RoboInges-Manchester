@@ -1,0 +1,39 @@
+running egg_info
+creating ../build/courseworks/courseworks.egg-info
+writing ../build/courseworks/courseworks.egg-info/PKG-INFO
+writing dependency_links to ../build/courseworks/courseworks.egg-info/dependency_links.txt
+writing entry points to ../build/courseworks/courseworks.egg-info/entry_points.txt
+writing requirements to ../build/courseworks/courseworks.egg-info/requires.txt
+writing top-level names to ../build/courseworks/courseworks.egg-info/top_level.txt
+writing manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+reading manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+writing manifest file '../build/courseworks/courseworks.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build
+creating /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib
+creating /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+copying courseworks/__init__.py -> /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+copying courseworks/signal_generator.py -> /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+copying courseworks/signal_process.py -> /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks
+running install
+running install_lib
+creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+copying /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks/__init__.py -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+copying /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks/signal_generator.py -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+copying /home/abraham/FundamemtacionRos2/Reto1/build/courseworks/build/lib/courseworks/signal_process.py -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks
+byte-compiling /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks/signal_generator.py to signal_generator.cpython-310.pyc
+byte-compiling /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks/signal_process.py to signal_process.cpython-310.pyc
+running install_data
+creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index
+creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index/resource_index
+creating /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index/resource_index/packages
+copying resource/courseworks -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/ament_index/resource_index/packages
+copying package.xml -> /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/share/courseworks
+running install_egg_info
+Copying ../build/courseworks/courseworks.egg-info to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/python3.10/site-packages/courseworks-0.0.0-py3.10.egg-info
+running install_scripts
+Installing signal_generator script to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/courseworks
+Installing signal_process script to /home/abraham/FundamemtacionRos2/Reto1/install/courseworks/lib/courseworks
+writing list of installed files to '/home/abraham/FundamemtacionRos2/Reto1/build/courseworks/install.log'
