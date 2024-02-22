@@ -38,6 +38,8 @@ class SignalProcessor(Node):
         msg_proc_signal = Float32()
         msg_proc_signal.data = processed_signal
         self.publisher_proc_signal.publish(msg_proc_signal)
+        # Imprimir la señal procesada en la terminal
+        self.get_logger().info('Processed Signal: %f' % processed_signal)
 
     def time_callback(self, msg):
         # No es necesario hacer nada con el tiempo en este nodo
@@ -51,7 +53,7 @@ def main(args=None):
     signal_processor = SignalProcessor()
     #Creación de bucle de eventos ros2
     rclpy.spin(signal_processor)
-    #Se liberan recursos como buena práctica
+    #Se liberan recursos como buena práctica    
     signal_processor.destroy_node()
     rclpy.shutdown()
 

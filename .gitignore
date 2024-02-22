@@ -1,18 +1,32 @@
-# Ignorar todas las carpetas "build"
-build/
+# Ignorar los directorios y archivos generados por la construcción del proyecto
+/build/
+/install/
+/log/
 
-# Excepto la carpeta "build" en la raíz del repositorio
-!Reto1/build/
+# Ignorar los archivos de configuración locales
+*.env
 
-# Ignorar todas las carpetas "build"
-install/
+# Ignorar los archivos y directorios de Python bytecode
+__pycache__/
+*.pyc
 
-# Excepto la carpeta "build" en la raíz del repositorio
-!Reto1/install/
+# Ignorar los archivos de registro y otros archivos temporales
+*.log
+*.temp
+*.tmp
+# Ignorar archivos de caché generados por el sistema operativo
+.DS_Store
 
-# Ignorar todas las carpetas "build"
-log/
+# Ignorar archivos de registro generados por Python
+*.log
 
-# Excepto la carpeta "build" en la raíz del repositorio
-!Reto1/log/
+# Ignorar archivos y directorios generados por el entorno de desarrollo virtual de Python
+venv/
+.env
 
+# Ignorar archivos compilados de Python
+__pycache__/
+*.pyc
+
+# Ignorar archivos de dependencias y directorios de módulos de Node.js
+node_modules/
