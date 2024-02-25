@@ -1,7 +1,8 @@
 # Ignorar los directorios y archivos generados por la construcción del proyecto
-/build/
-/install/
-/log/
+./build/
+./install/
+./log/
+../latest_build/
 
 # Ignorar los archivos de configuración locales
 *.env
@@ -30,3 +31,5 @@ __pycache__/
 
 # Ignorar archivos de dependencias y directorios de módulos de Node.js
 node_modules/
+Reto1/log/latest_build
+
