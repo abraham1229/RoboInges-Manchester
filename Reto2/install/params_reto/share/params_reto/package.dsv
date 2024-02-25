@@ -1,0 +1,6 @@
+source;share/params_reto/hook/pythonpath.ps1
+source;share/params_reto/hook/pythonpath.dsv
+source;share/params_reto/hook/pythonpath.sh
+source;share/params_reto/hook/ament_prefix_path.ps1
+source;share/params_reto/hook/ament_prefix_path.dsv
+source;share/params_reto/hook/ament_prefix_path.sh
