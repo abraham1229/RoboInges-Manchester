@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'signal_gener = params_reto.signal_gener:main'
+            'signal_gener = params_reto.signal_gener:main',
+            'signal_reconstruction = params_reto.signal_reconstruction:main',
         ],
     },
 )
