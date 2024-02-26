@@ -10,6 +10,7 @@ class My_Talker_Params(Node):
         self.declare_parameter('ri_amplitude', 1)
         self.declare_parameter('ri_freq', 1)
         self.declare_parameter('ri_offset', 1)
+        self.declare_parameter('ri_phase_shift', 1)
         self.pub = self.create_publisher(Float32, 'ri_signal', 1000)  # Frecuencia de publicación de 1kHz
         timer_period = 0.001  # Período de temporizador para 1kHz
         self.timer = self.create_timer(timer_period, self.timer_callback)

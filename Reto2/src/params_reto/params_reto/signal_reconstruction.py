@@ -19,7 +19,7 @@ class SignalProcessor(Node):
         # Crear publicador para proc_signal
         self.publisher_proc_signal = self.create_publisher(Float32, 'ri_signal_reconstructed', 10)  
         self.alpha = 10.0  # Valor inicial del offset
-        self.phase_shift = 20.0  # Valor inicial del cambio de fase}
+        self.phase_shift = 20.0  # Valor inicial del cambio de fase
         #Se manda mensaje de creación exitosa
         self.get_logger().info('Signal Processor node successfully initialized!!!')
 
