@@ -1,3 +1,0 @@
-[console_scripts]
-signal_gener = params_reto.signal_gener:main
-
