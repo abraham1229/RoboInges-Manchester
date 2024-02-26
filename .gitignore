@@ -32,4 +32,11 @@ __pycache__/
 # Ignorar archivos de dependencias y directorios de módulos de Node.js
 node_modules/
 Reto1/log/latest_build
+build/
+Reto1/build/
+Reto1/install/
+Reto1/log/
+Reto2/build/
+Reto2/install/
+Reto2/log/
 
