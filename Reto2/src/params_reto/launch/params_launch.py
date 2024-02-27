@@ -1,14 +1,23 @@
 #Importaciones necesarias
+import os
+from ament_index_python.packages import get_package_share_directory
 from launch_ros.actions import Node
 from launch import LaunchDescription
 
 def generate_launch_description():
 
+    config = os.path.join(
+        get_package_share_directory('params_reto'),
+        'config',
+        'params.yaml'
+        )
+    
     #Se corre el signal generator
     talker_node = Node(
         package='params_reto',
         executable='signal_gener',
         output='screen',
+        parameters = [config]
     )
 
     #Se corre el signal process
