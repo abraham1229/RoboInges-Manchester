@@ -11,7 +11,7 @@ class My_Talker_Params(Node):
             namespace='',
             parameters=[
                 ('ri_type', 1),
-                ('ri_amplitude', 0.5),
+                ('ri_amplitude', 1.5),
                 ('ri_freq', 2.0),
                 ('ri_offset', 1.0),
                 ('ri_phase_shift', 1.0)
@@ -32,8 +32,8 @@ class My_Talker_Params(Node):
         ri_offset = self.get_parameter('ri_offset').get_parameter_value().double_value
         ri_phase_shift =  self.get_parameter('ri_phase_shift').get_parameter_value().double_value
         if ri_type == 1:
-            # Generar una señal senoidal de 2 Hz y amplitud de 0.5
-            signal_value = ri_amplitude * math.sin(2 * math.pi * ri_freq * time + ri_phase_shift) + ri_offset
+            # Generar una señal senoidal de 2 Hz y amplitud de 0.5 por amplitud y mas offset
+            signal_value =  math.sin(2 * math.pi * ri_freq * time + ri_phase_shift)
         elif ri_type == 2:
             # Generar un pulso cuadrado
             signal_value = 1.0 if (self.get_clock().now().to_msg().sec % 2) < 1 else 0.0
@@ -42,23 +42,23 @@ class My_Talker_Params(Node):
             signal_value = (time % 10) / 10.0
         elif ri_type == 4:
             # Generar una señal coseno de 2 Hz y amplitud de 0.5
-            signal_value = 0.5 * math.cos(2 * math.pi * 2 * time)
+            signal_value = math.cos(2 * math.pi * 2 * time)
         elif ri_type == 5:
             # Generar una señal tangente
             signal_value = math.tan(time)
         else:
             # Si el tipo no es reconocido, generar una señal senoidal de 2 Hz y amplitud de 0.5 por defecto
-            signal_value = 0.5 * math.sin(2 * math.pi * 2 * time)
+            signal_value = math.sin(2 * math.pi * 2 * time)
 
         # Publicar el valor de la señal
         msg = Float32()
         msg.data = signal_value
         self.pub.publish(msg)
         msgDato = Num()
-        msgDato.num = ri_type
-        msgDato.num2 = ri_type
+        msgDato.amplitude = ri_amplitude
+        msgDato.offset = ri_offset
         self.pub_info.publish(msgDato)
-        self.get_logger().info('Publishing: "%d" and "%d"' % (msgDato.num, msgDato.num2)) 
+        # self.get_logger().info('Publishing: "%f" and "%f"' % (msgDato.amplitude, msgDato.offset)) 
         # amp = Float32()
         # amp.data = ri_amplitude
         # self.pub_datos.publish([amp,amp])

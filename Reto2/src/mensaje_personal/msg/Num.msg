@@ -1,2 +1,2 @@
-int64 num
-int64 num2
+float32 amplitude
+float32 offset
