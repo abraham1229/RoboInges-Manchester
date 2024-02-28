@@ -56,8 +56,9 @@ class My_Talker_Params(Node):
         self.pub.publish(msg)
         msgDato = Num()
         msgDato.num = ri_type
+        msgDato.num2 = ri_type
         self.pub_info.publish(msgDato)
-        self.get_logger().info('Publishing: "%d"' % msgDato.num) 
+        self.get_logger().info('Publishing: "%d" and "%d"' % (msgDato.num, msgDato.num2)) 
         # amp = Float32()
         # amp.data = ri_amplitude
         # self.pub_datos.publish([amp,amp])

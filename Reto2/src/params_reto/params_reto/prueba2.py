@@ -16,7 +16,7 @@ class MinimalSubscriber(Node):
         self.subscription
 
     def listener_callback(self, msg):
-            self.get_logger().info('I heard: "%d"' % msg.num)  # CHANGE
+        self.get_logger().info('Reading: "%d" and "%d"' % (msg.num, msg.num2)) 
 
 
 def main(args=None):
