@@ -10,9 +10,9 @@ class MinimalSubscriber(Node):
         super().__init__('minimal_subscriber')
         self.subscription = self.create_subscription(
             Num,                                               # CHANGE
-            'topic',
+            'ri_signal_params',
             self.listener_callback,
-            10)
+            1000)
         self.subscription
 
     def listener_callback(self, msg):

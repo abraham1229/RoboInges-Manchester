@@ -1,6 +1,6 @@
 ri_signal_generator:
   ros__parameters:
-    ri_type: 2.0
+    ri_type: 2
     ri_amplitude: 5.0
     ri_freq: 10.0
     ri_offset: 7.0

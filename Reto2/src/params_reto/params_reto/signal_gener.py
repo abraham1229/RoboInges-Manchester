@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
+from mensaje_personal.msg import Num  
 import math
 
 class My_Talker_Params(Node):
@@ -9,7 +10,7 @@ class My_Talker_Params(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('ri_type', 1.0),
+                ('ri_type', 1),
                 ('ri_amplitude', 0.5),
                 ('ri_freq', 2.0),
                 ('ri_offset', 1.0),
@@ -18,10 +19,13 @@ class My_Talker_Params(Node):
         self.pub = self.create_publisher(Float32, 'ri_signal', 1000)  # Frecuencia de publicación de 1kHz
         timer_period = 0.001  # Período de temporizador para 1kHz
         self.timer = self.create_timer(timer_period, self.timer_callback)
+
+        self.pub_info = self.create_publisher(Num, 'ri_signal_params', 1000)  # Frecuencia de publicación de 1kHz
+
         self.get_logger().info('Talker params node initialized')
 
     def timer_callback(self):
-        ri_type = self.get_parameter('ri_type').get_parameter_value().double_value
+        ri_type = self.get_parameter('ri_type').get_parameter_value().integer_value
         ri_amplitude = self.get_parameter('ri_amplitude').get_parameter_value().double_value
         time = self.get_clock().now().to_msg().nanosec / 1e9  # Convertir a segundos
         ri_freq = self.get_parameter('ri_freq').get_parameter_value().double_value
@@ -50,6 +54,10 @@ class My_Talker_Params(Node):
         msg = Float32()
         msg.data = signal_value
         self.pub.publish(msg)
+        msgDato = Num()
+        msgDato.num = ri_type
+        self.pub_info.publish(msgDato)
+        self.get_logger().info('Publishing: "%d"' % msgDato.num) 
         # amp = Float32()
         # amp.data = ri_amplitude
         # self.pub_datos.publish([amp,amp])

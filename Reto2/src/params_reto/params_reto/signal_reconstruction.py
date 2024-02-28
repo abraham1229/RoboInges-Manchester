@@ -2,6 +2,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
+from mensaje_personal.msg import Num 
 
 #Se crea el nodo SignalProcessor tomando objeto de Node.
 class SignalProcessor(Node):
@@ -13,7 +14,7 @@ class SignalProcessor(Node):
         #Se hace la subscripcion a el topico signal
         self.subscription_signal = self.create_subscription(
             Float32,
-            'ri_signal',
+            'ri_signal_params',
             self.signal_callback,
             10)
         # Crear publicador para proc_signal
