@@ -22,8 +22,12 @@ class MySignalReconstructor(Node):
 
         self.get_logger().info('Constructor params node initialized')
 
+        self.type = 0
         self.amplitude = 0.0
+        self.freq = 0.0
         self.offset = 0.0
+        self.phase_shift = 0.0
+
 
     def params_callback(self, msg):
         self.amplitude = msg.amplitude

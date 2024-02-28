@@ -33,30 +33,34 @@ class My_Talker_Params(Node):
         ri_phase_shift =  self.get_parameter('ri_phase_shift').get_parameter_value().double_value
         if ri_type == 1:
             # Generar una señal senoidal con frecuencia y desplazamiento de fase variables
-            signal_value = math.sin(2 * math.pi * ri_freq * time + ri_phase_shift)
+            signal_value = math.sin(2 * math.pi * time)
         elif ri_type == 2:
             # Generar un pulso cuadrado con frecuencia y desplazamiento de fase variables
-            signal_value = 1.0 if (math.sin(2 * math.pi * ri_freq * time + ri_phase_shift) > 0) else 0.0
+            signal_value = 1.0 if (math.sin(2 * math.pi * time ) > 0) else 0.0
         elif ri_type == 3:
             # Generar una señal de diente de sierra con frecuencia y desplazamiento de fase variables
-            signal_value = (time * ri_freq + ri_phase_shift) % (2)
+            signal_value = (time) % (2)
         elif ri_type == 4:
             # Generar una señal coseno con frecuencia y desplazamiento de fase variables
-            signal_value = math.cos(2 * math.pi * ri_freq * time + ri_phase_shift)
+            signal_value = math.cos(2 * math.pi * time )
         elif ri_type == 5:
             # Generar una señal tangente con frecuencia y desplazamiento de fase variables
-            signal_value = math.tan(time + ri_phase_shift)
+            signal_value = math.tan(time)
         else:
             # Si el tipo no es reconocido, generar una señal senoidal de 2 Hz y amplitud de 0.5 por defecto
-            signal_value = math.sin(2 * math.pi * ri_freq * time + ri_phase_shift)
+            signal_value = math.sin(2 * math.pi * time)
 
         # Publicar el valor de la señal
         msg = Float32()
         msg.data = signal_value
         self.pub.publish(msg)
         msgDato = Num()
+        msgDato.type = ri_type
         msgDato.amplitude = ri_amplitude
+        msgDato.freq = ri_freq
         msgDato.offset = ri_offset
+        msgDato.phase_shift = ri_phase_shift
+        msgDato.time = time
         self.pub_info.publish(msgDato)
         # self.get_logger().info('Publishing: "%f" and "%f"' % (msgDato.amplitude, msgDato.offset)) 
         # amp = Float32()
