@@ -9,11 +9,11 @@ class My_Talker_Params(Node):
         self.declare_parameters(
             namespace='',
             parameters=[
-                ('ri_type', 1),
+                ('ri_type', 1.0),
                 ('ri_amplitude', 0.5),
-                ('ri_freq', 2),
-                ('ri_offset', 1),
-                ('ri_phase_shift', 1)
+                ('ri_freq', 2.0),
+                ('ri_offset', 1.0),
+                ('ri_phase_shift', 1.0)
             ])
         self.pub = self.create_publisher(Float32, 'ri_signal', 1000)  # Frecuencia de publicación de 1kHz
         timer_period = 0.001  # Período de temporizador para 1kHz
@@ -21,12 +21,12 @@ class My_Talker_Params(Node):
         self.get_logger().info('Talker params node initialized')
 
     def timer_callback(self):
-        ri_type = self.get_parameter('ri_type').get_parameter_value().integer_value
+        ri_type = self.get_parameter('ri_type').get_parameter_value().double_value
         ri_amplitude = self.get_parameter('ri_amplitude').get_parameter_value().double_value
         time = self.get_clock().now().to_msg().nanosec / 1e9  # Convertir a segundos
-        ri_freq = self.get_parameter('ri_freq').get_parameter_value().integer_value
-        ri_offset = self.get_parameter('ri_offset').get_parameter_value().integer_value
-        ri_phase_shift =  self.get_parameter('ri_phase_shift').get_parameter_value().integer_value
+        ri_freq = self.get_parameter('ri_freq').get_parameter_value().double_value
+        ri_offset = self.get_parameter('ri_offset').get_parameter_value().double_value
+        ri_phase_shift =  self.get_parameter('ri_phase_shift').get_parameter_value().double_value
         if ri_type == 1:
             # Generar una señal senoidal de 2 Hz y amplitud de 0.5
             signal_value = ri_amplitude * math.sin(2 * math.pi * ri_freq * time + ri_phase_shift) + ri_offset
