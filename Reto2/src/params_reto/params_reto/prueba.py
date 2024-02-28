@@ -1,29 +1,36 @@
-from mensaje_personal.srv import AddThreeInts                                                           # CHANGE
-
 import rclpy
 from rclpy.node import Node
 
+from mensaje_personal.msg import Num                            # CHANGE
 
-class MinimalService(Node):
+
+class MinimalPublisher(Node):
 
     def __init__(self):
-        super().__init__('minimal_service')
-        self.srv = self.create_service(AddThreeInts, 'add_three_ints', self.add_three_ints_callback)       # CHANGE
+        super().__init__('minimal_publisher')
+        self.publisher_ = self.create_publisher(Num, 'topic', 10)  # CHANGE
+        timer_period = 0.5
+        self.timer = self.create_timer(timer_period, self.timer_callback)
+        self.i = 0
 
-    def add_three_ints_callback(self, request, response):
-        response.sum = request.a + request.b + request.c                                                   # CHANGE
-        self.get_logger().info('Incoming request\na: %d b: %d c: %d' % (request.a, request.b, request.c))  # CHANGE
+    def timer_callback(self):
+        msg = Num()                                                # CHANGE
+        msg.num = self.i                                           # CHANGE
+        self.publisher_.publish(msg)
+        self.get_logger().info('Publishing: "%d"' % msg.num)       # CHANGE
+        self.i += 1
 
-        return response
 
 def main(args=None):
     rclpy.init(args=args)
 
-    minimal_service = MinimalService()
+    minimal_publisher = MinimalPublisher()
 
-    rclpy.spin(minimal_service)
+    rclpy.spin(minimal_publisher)
 
+    minimal_publisher.destroy_node()
     rclpy.shutdown()
+
 
 if __name__ == '__main__':
     main()
