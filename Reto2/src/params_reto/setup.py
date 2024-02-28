@@ -27,6 +27,8 @@ setup(
         'console_scripts': [
             'signal_gener = params_reto.signal_gener:main',
             'signal_reconstruction = params_reto.signal_reconstruction:main',
+            'prueba = params_reto.prueba:main',
+            'prueba2 = params_reto.prueba2:main',
         ],
     },
 )

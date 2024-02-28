@@ -1,6 +1,7 @@
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
+from mensaje_personal.msg import Num 
 import math
 
 class My_Talker_Params(Node):
@@ -18,6 +19,9 @@ class My_Talker_Params(Node):
         self.pub = self.create_publisher(Float32, 'ri_signal', 1000)  # Frecuencia de publicación de 1kHz
         timer_period = 0.001  # Período de temporizador para 1kHz
         self.timer = self.create_timer(timer_period, self.timer_callback)
+
+        self.pub_datos = self.create_publisher(Float32, 'ri_signal_params', 1000)  # Frecuencia de publicación de 1kHz 
+
         self.get_logger().info('Talker params node initialized')
 
     def timer_callback(self):
@@ -50,6 +54,10 @@ class My_Talker_Params(Node):
         msg = Float32()
         msg.data = signal_value
         self.pub.publish(msg)
+        amp = Float32()
+        amp.data = ri_amplitude
+        self.pub_datos.publish([amp,amp])
+
 
 def main(args=None):
     rclpy.init(args=args)

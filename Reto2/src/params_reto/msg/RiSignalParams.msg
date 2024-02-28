@@ -1,0 +1,4 @@
+float32 ri_amplitude
+float32 ri_freq
+float32 ri_offset
+float32 ri_phase_shift
