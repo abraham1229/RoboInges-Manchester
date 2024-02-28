@@ -39,7 +39,7 @@ class My_Talker_Params(Node):
             signal_value = 1.0 if (math.sin(2 * math.pi * time ) > 0) else 0.0
         elif ri_type == 3:
             # Generar una señal de diente de sierra con frecuencia y desplazamiento de fase variables
-            signal_value = (time) % (2)
+            signal_value = math.sin(2 * math.pi * time)+math.cos(time)
         elif ri_type == 4:
             # Generar una señal coseno con frecuencia y desplazamiento de fase variables
             signal_value = math.cos(2 * math.pi * time )
