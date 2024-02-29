@@ -1,0 +1,22 @@
+// generated from rosidl_adapter/resource/msg.idl.em
+// with input from mensaje_personal/msg/Num.msg
+// generated code does not contain a copyright notice
+
+
+module mensaje_personal {
+  module msg {
+    struct Num {
+      int64 type;
+
+      float amplitude;
+
+      float freq;
+
+      float offset;
+
+      float phase_shift;
+
+      float time;
+    };
+  };
+};
