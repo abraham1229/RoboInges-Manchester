@@ -44,9 +44,13 @@ class MySignalReconstructor(Node):
         if self.type == 1:
             reconstructed_signal = self.amplitude * math.sin(2 * math.pi * self.time * self.freq + self.phase_shift) + self.offset
         elif self.type == 2:
-            reconstructed_signal = 1.0 if (math.sin(2 * math.pi * self.time ) > 0) else 0.0
-            reconstructed_signal = reconstructed_signal *self.amplitude +self.offset
-        elif self.type == 2:
+            # Generar un pulso cuadrado con frecuencia, offset, amplitud y desplazamiento de fase variables
+            # Calcula la señal del pulso cuadrado
+            signal_value = 1.0 if (math.sin(2 * math.pi * self.freq * self.time + self.phase_shift) > 0) else 0.0
+            # Ajusta la amplitud y el offset
+            reconstructed_signal = signal_value * self.amplitude + self.offset
+
+        elif self.type == 3:
             reconstructed_signal = self.amplitude * math.sin(2 * math.pi * self.time * self.freq + self.phase_shift) + self.offset + math.cos(self.time)
         elif self.type == 4:
             # Generar una señal coseno con frecuencia y desplazamiento de fase variables
@@ -56,8 +60,8 @@ class MySignalReconstructor(Node):
             reconstructed_signal = self.amplitude * math.tan(2 * math.pi * self.time * self.freq + self.phase_shift) + self.offset
         else:
             # Si el tipo no es reconocido, generar una señal senoidal de 2 Hz y amplitud de 0.5 por defecto
-            
             reconstructed_signal = self.amplitude * math.sin(2 * math.pi * self.time * self.freq + self.phase_shift) + self.offset
+        
         reconstructed_msg = Float32()
         reconstructed_msg.data = reconstructed_signal
         self.publisher.publish(reconstructed_msg)
