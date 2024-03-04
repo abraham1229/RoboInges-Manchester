@@ -1,22 +1,38 @@
 // Se incluyen las librerias necesarias.
 #include <micro_ros_arduino.h>
-
 #include <stdio.h>
 #include <rcl/rcl.h>
 #include <rcl/error_handling.h>
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
-
 #include <std_msgs/msg/int32.h>
+#include <std_msgs/msg/float32.h>
+#include "driver/adc.h"
+#include "driver/ledc.h"
+
+// Definiciones de pines
+#define POTENTIOMETER_PIN 36
+#define LED_PIN 13
+#define PWM_PIN 15
+
+// Rangos de ADC y voltaje
+#define ADC_RESOLUTION 4095
+#define VOLTAGE_MAX 3.3
 
 // Se declaran las variables globales
-rcl_publisher_t publisher;
+// Variables globales
+rcl_publisher_t raw_pot_publisher;
 std_msgs__msg__Int32 msg;
+rcl_publisher_t voltage_publisher;
+std_msgs__msg__Float32 voltage_msg;
+rcl_subscription_t pwm_duty_cycle_sub;
+std_msgs__msg__Float32 pwm_duty_cycle_msg;
+rcl_timer_t timer_1;
+rcl_timer_t timer_2;
 rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
 rcl_node_t node;
-rcl_timer_t timer;
 
 //Definiciones de pines 
 #define LED_PIN 13
@@ -35,11 +51,11 @@ void error_loop(){
 }
 
 // Callback al que se le llamara
-void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
+void timer_callback(rcl_timer_t * timer_1, int64_t last_call_time)
 {  
   RCLC_UNUSED(last_call_time);
-  if (timer != NULL) {
-    RCSOFTCHECK(rcl_publish(&publisher, &msg, NULL));
+  if (timer_1 != NULL) {
+    RCSOFTCHECK(rcl_publish(&raw_pot_publisher, &msg, NULL));
     msg.data++;
   }
 }
@@ -63,7 +79,7 @@ void setup() {
 
   // create publisher
   RCCHECK(rclc_publisher_init_default(
-    &publisher,
+    &raw_pot_publisher,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
     "micro_ros_arduino_node_publisher"));
@@ -71,14 +87,14 @@ void setup() {
   // create timer,
   const unsigned int timer_timeout = 1000;
   RCCHECK(rclc_timer_init_default(
-    &timer,
+    &timer_1,
     &support,
     RCL_MS_TO_NS(timer_timeout),
     timer_callback));
 
   // create executor
   RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
-  RCCHECK(rclc_executor_add_timer(&executor, &timer));
+  RCCHECK(rclc_executor_add_timer(&executor, &timer_1));
 
   msg.data = 0;
 }
