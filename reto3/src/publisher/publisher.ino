@@ -41,6 +41,8 @@ rcl_node_t node;
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
 #define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){}}
 
+// Se define lectura del potenciometro
+int pot_value = 0;
 
 // Indicador de error critico
 void error_loop(){
@@ -51,15 +53,34 @@ void error_loop(){
 }
 
 // Callback al que se le llamara
-void timer_callback(rcl_timer_t * timer_1, int64_t last_call_time)
+void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
 {  
   RCLC_UNUSED(last_call_time);
   if (timer_1 != NULL) {
-    RCSOFTCHECK(rcl_publish(&raw_pot_publisher, &msg, NULL));
-    msg.data++;
+    // Leer el valor del potenciómetro
+    pot_value = analogRead(POTENTIOMETER_PIN);
+    
   }
 }
 
+// Callback al que se le llamara 2
+void timer_callback_2(rcl_timer_t * timer_2, int64_t last_call_time)
+{  
+  RCLC_UNUSED(last_call_time);
+  if (timer_2 != NULL) {
+    
+    // Publicar el valor crudo del potenciómetro
+    msg.data = pot_value;
+    RCSOFTCHECK(rcl_publish(&raw_pot_publisher, &msg, NULL));
+    
+    // Mapear el valor del potenciómetro al rango de 0 a 3.3V
+    float voltage = pot_value * VOLTAGE_MAX / ADC_RESOLUTION;
+    
+    // Publicar el voltaje mapeado
+    msg.data = voltage;
+    RCSOFTCHECK(rcl_publish(&voltage_publisher, &msg, NULL));
+  }
+}
 
 void setup() {
   set_microros_transports();
@@ -90,7 +111,7 @@ void setup() {
     &timer_1,
     &support,
     RCL_MS_TO_NS(timer_timeout),
-    timer_callback));
+    timer_callback_2));
 
   // create executor
   RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
