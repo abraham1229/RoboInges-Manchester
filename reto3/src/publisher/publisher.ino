@@ -11,7 +11,7 @@
 #include "driver/ledc.h"
 
 // Definiciones de pines
-#define POTENTIOMETER_PIN 36
+#define POTENTIOMETER_PIN 34
 #define LED_PIN 13
 #define PWM_PIN 15
 
@@ -22,11 +22,9 @@
 // Se declaran las variables globales
 // Variables globales
 rcl_publisher_t raw_pot_publisher;
-std_msgs__msg__Int32 msg;
+std_msgs__msg__Float32 msg;
 rcl_publisher_t voltage_publisher;
-std_msgs__msg__Float32 voltage_msg;
 rcl_subscription_t pwm_duty_cycle_sub;
-std_msgs__msg__Float32 pwm_duty_cycle_msg;
 rcl_timer_t timer_1;
 rcl_timer_t timer_2;
 rclc_executor_t executor;
@@ -58,7 +56,7 @@ void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
   RCLC_UNUSED(last_call_time);
   if (timer_1 != NULL) {
     // Leer el valor del potenciómetro
-    pot_value = analogRead(POTENTIOMETER_PIN);
+    
     
   }
 }
@@ -68,7 +66,7 @@ void timer_callback_2(rcl_timer_t * timer_2, int64_t last_call_time)
 {  
   RCLC_UNUSED(last_call_time);
   if (timer_2 != NULL) {
-    
+    int pot_value = analogRead(POTENTIOMETER_PIN);
     // Publicar el valor crudo del potenciómetro
     msg.data = pot_value;
     RCSOFTCHECK(rcl_publish(&raw_pot_publisher, &msg, NULL));
@@ -102,8 +100,14 @@ void setup() {
   RCCHECK(rclc_publisher_init_default(
     &raw_pot_publisher,
     &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Int32),
-    "micro_ros_arduino_node_publisher"));
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
+    "ri_raw_pot"));
+
+  RCCHECK(rclc_publisher_init_default(
+    &voltage_publisher,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
+    "ri_voltage"));
 
   // create timer,
   const unsigned int timer_timeout = 1000;
