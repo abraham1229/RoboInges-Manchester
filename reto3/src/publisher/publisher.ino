@@ -12,8 +12,8 @@
 
 // Definiciones de pines
 #define POTENTIOMETER_PIN 34
-#define LED_PIN 13
-#define PWM_PIN 15
+#define LED_PIN 12
+#define PWM_PIN 33
 
 // Rangos de ADC y voltaje
 #define ADC_RESOLUTION 4095
@@ -32,8 +32,6 @@ rclc_support_t support;
 rcl_allocator_t allocator;
 rcl_node_t node;
 
-//Definiciones de pines 
-#define LED_PIN 13
 
 //Marco para verificación de errores
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
@@ -56,6 +54,7 @@ void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
   RCLC_UNUSED(last_call_time);
   if (timer_1 != NULL) {
     // Leer el valor del potenciómetro
+    pot_value = analogRead(POTENTIOMETER_PIN);
     
     
   }
@@ -66,7 +65,6 @@ void timer_callback_2(rcl_timer_t * timer_2, int64_t last_call_time)
 {  
   RCLC_UNUSED(last_call_time);
   if (timer_2 != NULL) {
-    int pot_value = analogRead(POTENTIOMETER_PIN);
     // Publicar el valor crudo del potenciómetro
     msg.data = pot_value;
     RCSOFTCHECK(rcl_publish(&raw_pot_publisher, &msg, NULL));
@@ -77,14 +75,34 @@ void timer_callback_2(rcl_timer_t * timer_2, int64_t last_call_time)
     // Publicar el voltaje mapeado
     msg.data = voltage;
     RCSOFTCHECK(rcl_publish(&voltage_publisher, &msg, NULL));
+    
+    // Calcula el valor de PWM a partir del valor del potenciómetro
+    int pwmValue = map(pot_value, 0, 4096, 0, 255);
+
+    // Configura el brillo del LED utilizando el valor de PWM
+    analogWrite(PWM_PIN, pwmValue);
   }
 }
+
+void subscription_callback(const void * msgin)
+{  
+  const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
+  // Calcula el valor de PWM a partir del duty cycle recibido
+  int pwmValue2 = map(msg->data, 0, 100, 0, 255);
+  
+  // Configura el brillo del LED utilizando el valor de PWM
+  analogWrite(LED_PIN, pwmValue2);
+}
+
 
 void setup() {
   set_microros_transports();
   
+  // Inicializa el pin del LED como salida
   pinMode(LED_PIN, OUTPUT);
-  digitalWrite(LED_PIN, HIGH);  
+
+  pinMode(PWM_PIN, OUTPUT);
+  
   
   delay(2000);
 
@@ -109,17 +127,35 @@ void setup() {
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "ri_voltage"));
 
+  // create subscriber
+  RCCHECK(rclc_subscription_init_default(
+    &pwm_duty_cycle_sub,
+    &node,
+    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
+    "ri_pwm_duty_cycle"));
+
   // create timer,
-  const unsigned int timer_timeout = 1000;
+  const unsigned int timer_timeout = 10;
   RCCHECK(rclc_timer_init_default(
     &timer_1,
     &support,
     RCL_MS_TO_NS(timer_timeout),
+    timer_callback_1));
+  
+  // create timer,
+  const unsigned int timer_timeout2 = 100;
+  RCCHECK(rclc_timer_init_default(
+    &timer_2,
+    &support,
+    RCL_MS_TO_NS(timer_timeout2),
     timer_callback_2));
 
   // create executor
-  RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
+  RCCHECK(rclc_executor_init(&executor, &support.context, 3, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &timer_1));
+  RCCHECK(rclc_executor_add_timer(&executor, &timer_2));
+
+  RCCHECK(rclc_executor_add_subscription(&executor, &pwm_duty_cycle_sub, &msg, &subscription_callback, ON_NEW_DATA));
 
   msg.data = 0;
 }
