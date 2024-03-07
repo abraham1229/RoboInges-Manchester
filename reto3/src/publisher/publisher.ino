@@ -11,20 +11,24 @@
 #include "driver/ledc.h"
 
 // Definiciones de pines
-#define POTENTIOMETER_PIN 34
-#define LED_PIN 12
-#define PWM_PIN 33
+#define POTENTIOMETER_PIN 34 //Pin que lee la entrada del pot.
+#define LED_PIN 12 // Pin que sera modificado con por duty cycle
+#define PWM_PIN 33 // Pin que será modificado con el pot
 
 // Rangos de ADC y voltaje
 #define ADC_RESOLUTION 4095
 #define VOLTAGE_MAX 3.3
 
 // Se declaran las variables globales
-// Variables globales
-rcl_publisher_t raw_pot_publisher;
-std_msgs__msg__Float32 msg;
-rcl_publisher_t voltage_publisher;
-rcl_subscription_t pwm_duty_cycle_sub;
+//Publicador de voltaje
+rcl_publisher_t raw_pot_publisher; 
+//Mensaje necesario y obligatorio para publicar
+std_msgs__msg__Float32 msg; 
+// Pub convertor de PWM
+rcl_publisher_t voltage_publisher; 
+//Sub que maneja duty cycle
+rcl_subscription_t pwm_duty_cycle_sub; 
+//Se declaran timers
 rcl_timer_t timer_1;
 rcl_timer_t timer_2;
 rclc_executor_t executor;
@@ -37,7 +41,7 @@ rcl_node_t node;
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
 #define RCSOFTCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){}}
 
-// Se define lectura del potenciometro
+// Se define lectura del potenciometro en global
 int pot_value = 0;
 
 // Indicador de error critico
@@ -100,7 +104,6 @@ void setup() {
   
   // Inicializa el pin del LED como salida
   pinMode(LED_PIN, OUTPUT);
-
   pinMode(PWM_PIN, OUTPUT);
   
   
@@ -114,27 +117,27 @@ void setup() {
   // create node (string vacio sería el nombre del namespace)
   RCCHECK(rclc_node_init_default(&node, "micro_ros_arduino_node", "", &support));
 
-  // create publisher
+  // create publisher para mandar entrada directa desde el pot
   RCCHECK(rclc_publisher_init_default(
     &raw_pot_publisher,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "ri_raw_pot"));
-
+  // create publisher para mandar voltaje de pwm
   RCCHECK(rclc_publisher_init_default(
     &voltage_publisher,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "ri_voltage"));
 
-  // create subscriber
+  // create subscriber que hará pwm según duty cycle obtenido
   RCCHECK(rclc_subscription_init_default(
     &pwm_duty_cycle_sub,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "ri_pwm_duty_cycle"));
 
-  // create timer,
+  // create timer1
   const unsigned int timer_timeout = 10;
   RCCHECK(rclc_timer_init_default(
     &timer_1,
@@ -142,7 +145,7 @@ void setup() {
     RCL_MS_TO_NS(timer_timeout),
     timer_callback_1));
   
-  // create timer,
+  // create timer2
   const unsigned int timer_timeout2 = 100;
   RCCHECK(rclc_timer_init_default(
     &timer_2,
@@ -150,7 +153,7 @@ void setup() {
     RCL_MS_TO_NS(timer_timeout2),
     timer_callback_2));
 
-  // create executor
+  // create executors para todos los publisher y suscribers
   RCCHECK(rclc_executor_init(&executor, &support.context, 3, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &timer_1));
   RCCHECK(rclc_executor_add_timer(&executor, &timer_2));
@@ -160,6 +163,7 @@ void setup() {
   msg.data = 0;
 }
 
+//Loop lo más vacio por buenas prácticas
 void loop() {
   delay(100);
   RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(100)));
