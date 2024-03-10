@@ -11,9 +11,9 @@
 #include "driver/ledc.h"
 
 // Definiciones de pines
-#define POTENTIOMETER_PIN 34 //Pin que lee la entrada del pot.
-#define LED_PIN 12 // Pin que sera modificado con por duty cycle
-#define PWM_PIN 33 // Pin que será modificado con el pot
+#define In1 27 //Pin que lee la entrada del pot.
+#define In2 33 // Pin que sera modificado con por duty cycle
+#define PWM_PIN 12 // Pin que será modificado con el pot
 
 // Rangos de ADC y voltaje
 #define ADC_RESOLUTION 4095
@@ -24,8 +24,6 @@
 rcl_publisher_t raw_pot_publisher; 
 //Mensaje necesario y obligatorio para publicar
 std_msgs__msg__Float32 msg; 
-// Pub convertor de PWM
-rcl_publisher_t voltage_publisher; 
 //Sub que maneja duty cycle
 rcl_subscription_t setpoint_sub; 
 //Se declaran timers
@@ -47,7 +45,7 @@ int pot_value = 0;
 // Indicador de error critico
 void error_loop(){
   while(1){
-    digitalWrite(LED_PIN, !digitalRead(LED_PIN));
+    digitalWrite(In2, !digitalRead(In2));
     delay(100);
   }
 }
@@ -58,45 +56,29 @@ void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
   RCLC_UNUSED(last_call_time);
   if (timer_1 != NULL) {
     // Leer el valor del potenciómetro
-    pot_value = analogRead(POTENTIOMETER_PIN);
     
     
   }
 }
 
 // Callback al que se le llamara 2
-void timer_callback_2(rcl_timer_t * timer_2, int64_t last_call_time)
-{  
-  RCLC_UNUSED(last_call_time);
-  if (timer_2 != NULL) {
-    // Publicar el valor crudo del potenciómetro
-    msg.data = pot_value;
-    RCSOFTCHECK(rcl_publish(&raw_pot_publisher, &msg, NULL));
-    
-    // Mapear el valor del potenciómetro al rango de 0 a 3.3V
-    float voltage = pot_value * VOLTAGE_MAX / ADC_RESOLUTION;
-    
-    // Publicar el voltaje mapeado
-    msg.data = voltage;
-    RCSOFTCHECK(rcl_publish(&voltage_publisher, &msg, NULL));
-    
-    // Calcula el valor de PWM a partir del valor del potenciómetro
-    int pwmValue = map(pot_value, 0, 4096, 0, 255);
-
-    // Configura el brillo del LED utilizando el valor de PWM
-    analogWrite(PWM_PIN, pwmValue);
-  }
-}
 
 void subscription_callback(const void * msgin)
 {  
   const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
   // Calcula el valor de PWM a partir del duty cycle recibido
-  float numToDec = msg->data * 100.0;
-  int pwmValue2 = map(numToDec, 0, 100, 0, 255);
-  
+  int pwmValue2 = map(abs(msg->data)*100, 0, 100, 0, 255);
   // Configura el brillo del LED utilizando el valor de PWM
-  analogWrite(LED_PIN, pwmValue2);
+  analogWrite(PWM_PIN, pwmValue2);
+
+  // Configura los pines In1 e In2 dependiendo del signo del duty cycle
+  if (msg->data < 0) {
+    digitalWrite(In1, HIGH);
+    digitalWrite(In2, LOW);
+  } else {
+    digitalWrite(In1, LOW);
+    digitalWrite(In2, HIGH);
+  }
 }
 
 
@@ -104,10 +86,16 @@ void setup() {
   set_microros_transports();
   
   // Inicializa el pin del LED como salida
-  pinMode(LED_PIN, OUTPUT);
+  pinMode(In1, OUTPUT);
+  pinMode(In2, OUTPUT);
   pinMode(PWM_PIN, OUTPUT);
-  
-  
+  digitalWrite(In1, HIGH);
+  digitalWrite(In2, HIGH);
+  digitalWrite(PWM_PIN, HIGH);
+  delay(2000);
+  digitalWrite(In1, LOW);
+  digitalWrite(In2, LOW);
+  digitalWrite(PWM_PIN, LOW);
   delay(2000);
 
   allocator = rcl_get_default_allocator();
@@ -124,12 +112,6 @@ void setup() {
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "ri_raw_pot"));
-  // create publisher para mandar voltaje de pwm
-  RCCHECK(rclc_publisher_init_default(
-    &voltage_publisher,
-    &node,
-    ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
-    "ri_voltage"));
 
   // create subscriber que hará pwm según duty cycle obtenido
   RCCHECK(rclc_subscription_init_default(
@@ -145,19 +127,10 @@ void setup() {
     &support,
     RCL_MS_TO_NS(timer_timeout),
     timer_callback_1));
-  
-  // create timer2
-  const unsigned int timer_timeout2 = 100;
-  RCCHECK(rclc_timer_init_default(
-    &timer_2,
-    &support,
-    RCL_MS_TO_NS(timer_timeout2),
-    timer_callback_2));
 
   // create executors para todos los publisher y suscribers
   RCCHECK(rclc_executor_init(&executor, &support.context, 3, &allocator));
   RCCHECK(rclc_executor_add_timer(&executor, &timer_1));
-  RCCHECK(rclc_executor_add_timer(&executor, &timer_2));
 
   RCCHECK(rclc_executor_add_subscription(&executor, &setpoint_sub, &msg, &subscription_callback, ON_NEW_DATA));
 
