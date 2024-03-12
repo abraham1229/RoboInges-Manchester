@@ -19,3 +19,5 @@ ri_Setpoint:
       offset: 0.0
       phase: 3.0
       time: 0.0
+    ri_constant:
+      amplitude: 0.5

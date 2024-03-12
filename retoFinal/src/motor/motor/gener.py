@@ -31,8 +31,9 @@ class My_Talker_Params(Node):
                 ('ri_sawtooth.offset', rclpy.Parameter.Type.DOUBLE),
                 ('ri_sawtooth.phase', rclpy.Parameter.Type.DOUBLE),
                 ('ri_sawtooth.time', rclpy.Parameter.Type.DOUBLE),
-
+                ('ri_constant.amplitude', rclpy.Parameter.Type.DOUBLE),
             ])
+        
         # Frecuencia de publicación de 1kHz
         self.pub = self.create_publisher(Float32, 'ri_setpoint', 1000)  
         # Período de temporizador para 1kHz
@@ -69,6 +70,10 @@ class My_Talker_Params(Node):
             offset = self.get_parameter('ri_sawtooth.offset').get_parameter_value().double_value
             phase =  self.get_parameter('ri_sawtooth.phase').get_parameter_value().double_value
             signal_value = amplitude * signal.sawtooth(2 * math.pi * time * freq + phase) + offset
+        elif ri_type == 3:
+            #Señal de seno mas coseno
+            amplitude = self.get_parameter('ri_constant.amplitude').get_parameter_value().double_value
+            signal_value = amplitude
         else:
             #Señal de sen (en cualquier otro caso)
             amplitude = self.get_parameter('ri_sine.amplitude').get_parameter_value().double_value
