@@ -15,9 +15,9 @@
 #define In2 33 // Pin que sera modificado con por duty cycle
 #define PWM_PIN 12 // Pin que será modificado con el pot
 
-// Rangos de ADC y voltaje
-#define ADC_RESOLUTION 4095
-#define VOLTAGE_MAX 3.3
+#define freq 5000//Frecuencia de PWM
+#define resolution 8 //Resolución de PWM 2^8 = 256
+#define PWM1_Ch 0 // Canal de PWM
 
 // Se declaran las variables globales
 //Publicador de voltaje
@@ -69,9 +69,9 @@ void subscription_callback(const void * msgin)
 {  
   const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
   // Calcula el valor de PWM a partir del duty cycle recibido
-  int pwmValue2 = map(abs(msg->data)*100, 0, 100, 0, 255);
+  int pwmValue = map(abs(msg->data)*100, 0, 100, 0, 255);
   // Configura el brillo del LED utilizando el valor de PWM
-  analogWrite(PWM_PIN, pwmValue2);
+  ledcWrite(PWM1_Ch, pwmValue);
 
   // Configura los pines In1 e In2 dependiendo del signo del duty cycle
   if (msg->data < 0) {
@@ -112,14 +112,10 @@ void setup() {
   pinMode(In1, OUTPUT);
   pinMode(In2, OUTPUT);
   pinMode(PWM_PIN, OUTPUT);
-  digitalWrite(In1, HIGH);
-  digitalWrite(In2, HIGH);
-  digitalWrite(PWM_PIN, HIGH);
-  delay(2000);
-  digitalWrite(In1, LOW);
-  digitalWrite(In2, LOW);
-  digitalWrite(PWM_PIN, LOW);
-  delay(2000);
+  
+  // configurar funciones PWM
+  ledcSetup(PWM1_Ch, freq, resolution);
+  ledcAttachPin(PWM_PIN, PWM1_Ch);
 
   allocator = rcl_get_default_allocator();
 
