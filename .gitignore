@@ -40,3 +40,13 @@ Reto2/build/
 Reto2/install/
 Reto2/log/
 
+# Ignorar todos los archivos listados en install/
+install/courseworks/share/courseworks/package.sh
+install/local_setup.sh
+install/setup.bash
+install/setup.ps1
+install/setup.sh
+install/setup.zsh
+
+
+

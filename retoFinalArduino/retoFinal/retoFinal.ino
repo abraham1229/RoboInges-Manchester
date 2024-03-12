@@ -21,7 +21,7 @@
 
 // Se declaran las variables globales
 //Publicador de voltaje
-rcl_publisher_t raw_pot_publisher; 
+rcl_publisher_t controller; 
 //Mensaje necesario y obligatorio para publicar
 std_msgs__msg__Float32 msg; 
 //Sub que maneja duty cycle
@@ -41,6 +41,7 @@ rcl_node_t node;
 
 // Se define lectura del potenciometro en global
 int pot_value = 0;
+bool direccion = true;
 
 // Indicador de error critico
 void error_loop(){
@@ -56,7 +57,8 @@ void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
   RCLC_UNUSED(last_call_time);
   if (timer_1 != NULL) {
     // Leer el valor del potenciómetro
-    
+    msg.data = 10;
+    RCSOFTCHECK(rcl_publish(&controller, &msg, NULL));
     
   }
 }
@@ -73,11 +75,32 @@ void subscription_callback(const void * msgin)
 
   // Configura los pines In1 e In2 dependiendo del signo del duty cycle
   if (msg->data < 0) {
-    digitalWrite(In1, HIGH);
-    digitalWrite(In2, LOW);
+    if (direccion == true){
+      digitalWrite(In1, HIGH);
+      digitalWrite(In2, LOW);
+    }
+    else{
+      digitalWrite(In1, LOW);
+      digitalWrite(In2, LOW);
+      delay(10);
+      digitalWrite(In1, HIGH);
+      digitalWrite(In2, LOW);
+      direccion = true;
+    }
   } else {
-    digitalWrite(In1, LOW);
-    digitalWrite(In2, HIGH);
+    if(direccion == false){
+      digitalWrite(In1, LOW);
+      digitalWrite(In2, HIGH);
+    }
+    else{
+      digitalWrite(In1, LOW);
+      digitalWrite(In2, LOW);
+      delay(10);
+      digitalWrite(In1, LOW);
+      digitalWrite(In2, HIGH);
+      direccion = false;
+    }
+    
   }
 }
 
@@ -108,10 +131,10 @@ void setup() {
 
   // create publisher para mandar entrada directa desde el pot
   RCCHECK(rclc_publisher_init_default(
-    &raw_pot_publisher,
+    &controller,
     &node,
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
-    "ri_raw_pot"));
+    "ri_controller"));
 
   // create subscriber que hará pwm según duty cycle obtenido
   RCCHECK(rclc_subscription_init_default(
@@ -121,7 +144,7 @@ void setup() {
     "ri_setpoint"));
 
   // create timer1
-  const unsigned int timer_timeout = 10;
+  const unsigned int timer_timeout = 0.1;
   RCCHECK(rclc_timer_init_default(
     &timer_1,
     &support,

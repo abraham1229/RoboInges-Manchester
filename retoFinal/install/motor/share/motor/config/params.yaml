@@ -1,0 +1,21 @@
+ri_Setpoint:
+  ros__parameters:
+    ri_type: 0
+    ri_sine:
+      amplitude: 1.0
+      frequency: 1.0
+      offset: 0.0
+      phase: 3.0
+      time: 0.0
+    ri_square:
+      amplitude: 1.0
+      frequency: 1.0
+      offset: 0.0
+      phase: 3.0
+      time: 0.0
+    ri_sawtooth:
+      amplitude: 1.0
+      frequency: 1.0
+      offset: 0.0
+      phase: 3.0
+      time: 0.0
