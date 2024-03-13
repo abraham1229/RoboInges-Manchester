@@ -9,6 +9,9 @@
 #include <std_msgs/msg/float32.h>
 #include "driver/adc.h"
 #include "driver/ledc.h"
+#include <math.h>
+
+
 
 // Definiciones de pines
 #define In1 27 //Pin que lee la entrada del pot.
@@ -17,10 +20,18 @@
 #define EncA  25 // GPIO para señal A del encoder
 #define EncB  26 // GPIO para señal B del encoder
 
+//Definicion del PWM
 #define freq 5000//Frecuencia de PWM
 #define resolution 8 //Resolución de PWM 2^8 = 256
 #define PWM1_Ch 0 // Canal de PWM
 
+//Definicion del pid
+#define Umax 14 
+#define Umin 0
+#define T 0.01 // sampling time
+#define pi M_PI
+
+//Variables para el encoder
 int32_t tiempo_act = 0, tiempo_ant = 0, delta_tiempo = 2e9;
 int pwmValue = 0;        // valor de salida al PWM
 int pot;
@@ -32,6 +43,28 @@ int32_t contador = 0, contaux = 0, revoluciones;
 volatile bool BSet = 0;
 volatile bool ASet = 0;
 volatile bool encoderDirection = false;
+
+//Variables del PID
+const double p1 = -0.000009;
+const double p2 = 0.0049;
+const double p3 = -0.7601;
+const double p4 = 34.24;
+double valorEncoderRpm = 0;
+double valorEncoderRpm_anterior = 0;
+double velocidadMotor=0;
+bool velSigno;
+
+int setpoint = 0;
+
+double error;
+double P, I, D, U;
+double I_prec=0, U_prec=0, D_prec=0; 
+bool Saturado = false;
+
+double Kp = 60;  
+double Ki = 0.10745; 
+double Kd = 0.0268625;
+
 
 // Se declaran las variables globales
 //Publicador de voltaje
@@ -101,6 +134,26 @@ void pose ()
   
 }
 
+///Función del control
+void controlPID(){
+  error = valorEncoderRpm - setpoint; 
+  P = Kp*error;
+  I = I_prec + T*Ki*error;
+
+  D = (Kd/T)*(valorEncoderRpm - valorEncoderRpm_anterior);
+
+  U = P + I + D; 
+
+
+  velocidadMotor = p1*pow(U,3) + p2*pow(U,2) + p3*U + p4;
+
+  ledcWrite(PWM1_Ch, velocidadMotor);
+
+  I_prec = I;
+  valorEncoderRpm_anterior = valorEncoderRpm;
+  D_prec = D; 
+}
+
 ////FUNCIONES DE ROS
 //Marco para verificación de errores
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
@@ -125,7 +178,14 @@ void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
   if (timer_1 != NULL) {
     // Leer el valor del potenciómetro
     pose();    
-    msg.data = velocidad;
+    if (direccion){
+      msg.data = -velocidad*2*pi/60;
+    }
+    else{
+      msg.data = velocidad*2*pi/60;
+    }
+    
+    valorEncoderRpm = velocidad;
     RCSOFTCHECK(rcl_publish(&controller, &msg, NULL));
     
   }
@@ -136,11 +196,11 @@ void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
 void subscription_callback(const void * msgin)
 {  
   const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
-  // Calcula el valor de PWM a partir del duty cycle recibido
-  pwmValue = map(abs(msg->data)*100, 0, 100, 0, 255);
-  // Configura el brillo del LED utilizando el valor de PWM
-  ledcWrite(PWM1_Ch, pwmValue);
 
+  setpoint = abs(msg->data) * 14;
+  // Configura el brillo del LED utilizando el valor de PWM
+  controlPID();
+  
   // Configura los pines In1 e In2 dependiendo del signo del duty cycle
   if (msg->data < 0) {
     if (direccion == true){
@@ -213,7 +273,7 @@ void setup() {
     "ri_setpoint"));
 
   // create timer1
-  const unsigned int timer_timeout = 0.1;
+  const unsigned int timer_timeout = 0.01;
   RCCHECK(rclc_timer_init_default(
     &timer_1,
     &support,
