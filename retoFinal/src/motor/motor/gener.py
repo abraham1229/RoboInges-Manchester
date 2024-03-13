@@ -34,9 +34,9 @@ class My_Talker_Params(Node):
                 ('ri_constant.amplitude', rclpy.Parameter.Type.DOUBLE),
             ])
         
-        # Frecuencia de publicación de 1kHz
+        # Frecuencia de publicación de 10Hz
         self.pub = self.create_publisher(Float32, 'ri_setpoint', 1000)  
-        # Período de temporizador para 1kHz
+        # Período de temporizador para 10Hz
         timer_period = 0.1 
         #Se declara el timer que llamará al callback
         self.timer = self.create_timer(timer_period, self.timer_callback)
@@ -46,9 +46,9 @@ class My_Talker_Params(Node):
     def timer_callback(self):
 
         time = self.get_clock().now().to_msg().nanosec / 1e9  # Convertir a segundos
-        #Se hace la lectura de los parámetros a utilizar
+        #Se hace la lectura del parámetro type
         ri_type = self.get_parameter('ri_type').get_parameter_value().integer_value
-        #Se generan condiciones para las 5 señales
+        #Se generan condiciones para las 5 señales y lectura de sus params 
         if ri_type == 0:
             #Señal de seno
             amplitude = self.get_parameter('ri_sine.amplitude').get_parameter_value().double_value
