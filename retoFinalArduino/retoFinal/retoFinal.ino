@@ -14,9 +14,9 @@
 
 
 // Definiciones de pines
-#define In1 27 //Pin que lee la entrada del pot.
-#define In2 33 // Pin que sera modificado con por duty cycle
-#define PWM_PIN 12 // Pin que será modificado con el pot
+#define In1 27 //Pin1 del motor
+#define In2 33 // Pin2 del motor
+#define PWM_PIN 12 // Pin que otorga el PWM necesario
 #define EncA  25 // GPIO para señal A del encoder
 #define EncB  26 // GPIO para señal B del encoder
 
@@ -32,11 +32,9 @@
 #define pi M_PI
 
 //Variables para el encoder
-int32_t tiempo_act = 0, tiempo_ant = 0, delta_tiempo = 2e9;
+int32_t tiempo_act = 0, tiempo_ant = 0, delta_tiempo = 2e9; //Variables para calcular velocidad
 int pwmValue = 0;        // valor de salida al PWM
-int pot;
-char opcion;
-float posicion=0, posactual = 0, posanterior = 0, velocidad = 0;
+float posicion=0, posactual = 0, posanterior = 0, velocidad = 0; //Variables entregadas del encoder
 float resolucion = 0.065;  //Definir resolución del encoder
 int pulsos = 5500;      //Número de pulsos a la salida del motorreductor
 int32_t contador = 0, contaux = 0, revoluciones;
@@ -44,38 +42,36 @@ volatile bool BSet = 0;
 volatile bool ASet = 0;
 volatile bool encoderDirection = false;
 
-//Variables del PID
+//Variables del PID (ecuación característica obtenida heurísticamente)
 const double p1 = -0.000009;
 const double p2 = 0.0049;
 const double p3 = -0.7601;
 const double p4 = 34.24;
+//Se declaran las variables de la velocidad
 double valorEncoderRpm = 0;
 double valorEncoderRpm_anterior = 0;
 double velocidadMotor=0;
-bool velSigno;
-
+//Lectura del tópico
 int setpoint = 0;
-
 double error;
 double P, I, D, U;
 double I_prec=0, U_prec=0, D_prec=0; 
-bool Saturado = false;
 
+//Se declara proporcional, integrador y derivativo del controlador
 double Kp = 60;  
 double Ki = 0.10745; 
 double Kd = 0.0268625;
 
 
 // Se declaran las variables globales
-//Publicador de voltaje
+//Publicador de la velocidad angular (rad/s)
 rcl_publisher_t controller; 
 //Mensaje necesario y obligatorio para publicar
 std_msgs__msg__Float32 msg; 
 //Sub que maneja duty cycle
 rcl_subscription_t setpoint_sub; 
-//Se declaran timers
+//Se declara timer
 rcl_timer_t timer_1;
-rcl_timer_t timer_2;
 rclc_executor_t executor;
 rclc_support_t support;
 rcl_allocator_t allocator;
@@ -136,19 +132,24 @@ void pose ()
 
 ///Función del control
 void controlPID(){
+  //Se calcula el error del sistema
   error = valorEncoderRpm - setpoint; 
+
+  //Se obtienen las salidas de los coeficientes del control
   P = Kp*error;
+
   I = I_prec + T*Ki*error;
 
   D = (Kd/T)*(valorEncoderRpm - valorEncoderRpm_anterior);
 
   U = P + I + D; 
 
-
+  //Se usa la función de la ecuación característica respecto a U
   velocidadMotor = p1*pow(U,3) + p2*pow(U,2) + p3*U + p4;
 
   ledcWrite(PWM1_Ch, velocidadMotor);
 
+  //Se declaran las variables en anterior para cambiarlas en el presente
   I_prec = I;
   valorEncoderRpm_anterior = valorEncoderRpm;
   D_prec = D; 
@@ -171,13 +172,15 @@ void error_loop(){
   }
 }
 
-// Callback al que se le llamara
+// Callback al que se le llamara del publisher
 void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
 {  
   RCLC_UNUSED(last_call_time);
   if (timer_1 != NULL) {
-    // Leer el valor del potenciómetro
-    pose();    
+    //Calcula la velocidad con el encoder
+    pose();
+
+    //Se declara el signo de la velocidad.    
     if (direccion){
       msg.data = -velocidad*2*pi/60;
     }
@@ -191,17 +194,19 @@ void timer_callback_1(rcl_timer_t * timer_1, int64_t last_call_time)
   }
 }
 
-// Callback al que se le llamara 2
+// Callback al que se le llamara del suscriber
 
 void subscription_callback(const void * msgin)
 {  
   const std_msgs__msg__Float32 * msg = (const std_msgs__msg__Float32 *)msgin;
 
+  //Se cambia a RPM ()
   setpoint = abs(msg->data) * 14;
   // Configura el brillo del LED utilizando el valor de PWM
   controlPID();
   
   // Configura los pines In1 e In2 dependiendo del signo del duty cycle
+  // Si es que cambia de signo bruscamente, se detiene para no afectar los electrónicos.
   if (msg->data < 0) {
     if (direccion == true){
       digitalWrite(In1, HIGH);
@@ -237,7 +242,7 @@ void subscription_callback(const void * msgin)
 void setup() {
   set_microros_transports();
   
-  // Inicializa el pin del LED como salida
+  // Se inicializan como salida el PWM y las salidas del motor
   pinMode(In1, OUTPUT);
   pinMode(In2, OUTPUT);
   pinMode(PWM_PIN, OUTPUT);
@@ -246,6 +251,8 @@ void setup() {
   ledcSetup(PWM1_Ch, freq, resolution);
   ledcAttachPin(PWM_PIN, PWM1_Ch);
 
+
+  //Configuracion del encoder.
   pinMode(EncA, INPUT_PULLUP);    // Señal A del encoder como entrada con pull-up
   pinMode(EncB, INPUT_PULLUP);    // Señal B del encoder como entrada con pull-up
   attachInterrupt(digitalPinToInterrupt(EncA), Encoder, CHANGE); // Asignar la función Encoder a la interrupción de cambio en la señal A
@@ -258,7 +265,7 @@ void setup() {
   // create node (string vacio sería el nombre del namespace)
   RCCHECK(rclc_node_init_default(&node, "micro_ros_arduino_node", "", &support));
 
-  // create publisher para mandar entrada directa desde el pot
+  // create publisher para mandar le velocidad lineal
   RCCHECK(rclc_publisher_init_default(
     &controller,
     &node,
@@ -272,7 +279,8 @@ void setup() {
     ROSIDL_GET_MSG_TYPE_SUPPORT(std_msgs, msg, Float32),
     "ri_setpoint"));
 
-  // create timer1
+  // create timer1 
+  // SE TIENE ESA FRECUENNCIA PORQUE ES MÁS DE DOS VECES LAS QUE SE MANDAN DESDE PYTHON (teorena de nyquist)
   const unsigned int timer_timeout = 0.01;
   RCCHECK(rclc_timer_init_default(
     &timer_1,
