@@ -6,6 +6,7 @@ from launch import LaunchDescription
 
 def generate_launch_description():
 
+    #Se declara la dirección del launchfile
     config = os.path.join(
         get_package_share_directory('motor'),
         'config',
@@ -32,7 +33,7 @@ def generate_launch_description():
         package='rqt_plot',
         executable='rqt_plot',
         output='screen',
-        arguments=[{'args': '/ri_Setpoint/data'}],  # Se especifican los tópicos
+        arguments=[{'args': '/ri_Setpoint/data'}],  # Se especifican los tópicos a graficar
     )
 
     l_d = LaunchDescription([talker_node, rqt_graph_node, rqt_plot_node])
